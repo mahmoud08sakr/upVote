@@ -52,15 +52,24 @@ export const softDeletePost = async (req, res) => {
     res.status(200).json({ message: "Post deleted successfully", post: updatedPost });
 }
 
-
 export const getAllPosts = async (req, res) => {
-    let { size, page } = req.query
-    let posts = await postModel.find({ isDeleted: false }).limit(+size).skip((page - 1) * size).populate('userId', 'name email').populate({
-        path: "comment", // Populating the virtual field
-        populate: { path: "userId", select: "name email" } 
-    })
-    res.json({ message: "Posts fetched successfully", posts })
-}
+    let { size = 10, page = 1 } = req.query; 
+
+    try {
+        let posts = await postModel.find({ isDeleted: false })
+            .sort({ likes: -1 }) 
+            .limit(+size)
+            .skip((page - 1) * size)
+            .populate("userId", "name email")
+            .populate({
+                path: "comment",
+                populate: { path: "userId", select: "name email" }
+            });
+        res.json({ message: "Posts fetched successfully", posts });
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching posts", error });
+    }
+};
 
 export const likePost_unlikedPost = async (req, res) => {
     let { id } = req.params;
