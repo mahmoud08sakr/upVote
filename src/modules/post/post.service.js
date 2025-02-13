@@ -53,11 +53,11 @@ export const softDeletePost = async (req, res) => {
 }
 
 export const getAllPosts = async (req, res) => {
-    let { size , page  } = req.query; 
+    let { size, page } = req.query;
 
     try {
         let posts = await postModel.find({ isDeleted: false })
-            .sort({ likes: -1 }) 
+            .sort({ likes: -1 })
             .limit(+size)
             .skip((page - 1) * size)
             .populate("userId", "name email")
