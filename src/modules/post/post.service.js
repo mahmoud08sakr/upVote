@@ -53,7 +53,7 @@ export const softDeletePost = async (req, res) => {
 }
 
 export const getAllPosts = async (req, res) => {
-    let { size = 10, page = 1 } = req.query; 
+    let { size , page  } = req.query; 
 
     try {
         let posts = await postModel.find({ isDeleted: false })
